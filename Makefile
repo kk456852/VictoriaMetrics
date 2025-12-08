@@ -488,7 +488,7 @@ vendor-update:
 	go mod vendor
 
 app-local:
-	CGO_ENABLED=1 go build $(RACE) -ldflags "$(GO_BUILDINFO)" -tags "$(EXTRA_GO_BUILD_TAGS)" -o bin/$(APP_NAME)$(RACE) $(PKG_PREFIX)/app/$(APP_NAME)
+	CGO_ENABLED=0 go build $(RACE) -ldflags "$(GO_BUILDINFO)" -o bin/$(APP_NAME)$(RACE) $(PKG_PREFIX)/app/$(APP_NAME)
 
 app-local-pure:
 	CGO_ENABLED=0 go build $(RACE) -ldflags "$(GO_BUILDINFO)" -tags "$(EXTRA_GO_BUILD_TAGS)" -o bin/$(APP_NAME)-pure$(RACE) $(PKG_PREFIX)/app/$(APP_NAME)

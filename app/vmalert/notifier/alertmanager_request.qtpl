@@ -15,6 +15,10 @@
     {% if !alert.End.IsZero() %}
     "endsAt":{%q= alert.End.Format(time.RFC3339Nano) %},
     {% endif %}
+    "state": {%q= alert.State.String() %},
+    {% if !alert.ResolvedAt.IsZero() %}
+    "resolvedAt": {%q= alert.ResolvedAt.Format(time.RFC3339Nano) %},
+    {% endif %}
     "labels": {
         {% code ll := len(lbls) %}
         {% for idx, l := range lbls %}
