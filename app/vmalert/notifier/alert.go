@@ -29,6 +29,10 @@ type Alert struct {
 	Annotations map[string]string
 	// State represents the current state of the Alert
 	State AlertState
+	// LastStateChangeTime defines the moment of time when Alert state has changed
+	LastStateChangeTime time.Time // 最后一次状态变化的时间
+	// LastNotifiedState is the last state that was notified
+	LastNotifiedState AlertState // 上次已通知的状态
 	// Expr contains expression that was executed to generate the Alert
 	Expr string
 	// ActiveAt defines the moment of time when Alert has become active

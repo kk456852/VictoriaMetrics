@@ -860,11 +860,12 @@ func (ar *AlertingRule) restore(ctx context.Context, q datasource.Querier, ts ti
 func (ar *AlertingRule) alertsToSend(resolveDuration, resendDelay time.Duration) []notifier.Alert {
 	currentTime := time.Now()
 	needsSending := func(a *notifier.Alert) bool {
-		if a.State == notifier.StateInactive && a.ResolvedAt.After(a.LastSent) {
-			return true // 只在 ResolvedAt 之后首次发送
+		if a.State == notifier.StatePending {
+			return false
 		}
-		// 移除或修改 resendDelay 逻辑,不让 Inactive 状态重发
-		if a.State == notifier.StateFiring && a.LastSent.Add(resendDelay).Before(currentTime) {
+
+		// 核心逻辑:只在状态变化且未通知过该状态时发送
+		if a.State != a.LastNotifiedState {
 			return true
 		}
 		return false
@@ -880,6 +881,8 @@ func (ar *AlertingRule) alertsToSend(resolveDuration, resendDelay time.Duration)
 			a.End = a.ResolvedAt
 		}
 		a.LastSent = currentTime
+		a.LastStateChangeTime = currentTime
+		a.LastNotifiedState = a.State
 		alerts = append(alerts, *a)
 	}
 	return alerts

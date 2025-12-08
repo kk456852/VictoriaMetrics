@@ -1,0 +1,33 @@
+groups:
+  - name: charge_state_transitions
+    interval: 3s
+    rules:
+      # 🔥 1. 开始充电：CONTROL_CHARGE_STATE 从 0 → 1（事件型）
+      - alert: StartCharging
+        expr: |
+          CONTROL_CHARGE_STATE == 1
+          and CONTROL_CHARGE_STATE offset 6s == 0
+        labels:
+          severity: info
+          alert_type: event
+        annotations:
+          summary: "车辆 {{ $labels.car_uuid }} 开始充电"
+          description: "车辆 {{ $labels.car_uuid }} 的充电状态从 0 → 1（开始充电）"
+          current_value: "{{ $value }}"
+          timestamp: "{{ $labels.__timestamp__ }}"
+
+      # 🔥 2. 停止充电：CONTROL_CHARGE_STATE 从 1 → 0（事件型）
+      - alert: StopCharging
+        expr: |
+          CONTROL_CHARGE_STATE == 0
+          and CONTROL_CHARGE_STATE offset 6s == 1
+        labels:
+          severity: warning
+          alert_type: event
+        annotations:
+          summary: "车辆 {{ $labels.car_uuid }} 停止充电"
+          description: "车辆 {{ $labels.car_uuid }} 的充电状态从 1 → 0（停止充电）"
+          current_value: "{{ $value }}"
+          timestamp: "{{ $labels.__timestamp__ }}"
+      
+
