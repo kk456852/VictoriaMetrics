@@ -880,6 +880,9 @@ func (ar *AlertingRule) alertsToSend(resolveDuration, resendDelay time.Duration)
 		if a.State == notifier.StateInactive {
 			a.End = a.ResolvedAt
 		}
+		if a.State == notifier.StateFiring {
+			a.ResolvedAt = time.Time{} // reset ResolvedAt for Firing state
+		}
 		a.LastSent = currentTime
 		a.LastStateChangeTime = currentTime
 		a.LastNotifiedState = a.State
